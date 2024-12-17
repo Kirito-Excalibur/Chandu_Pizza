@@ -4,6 +4,7 @@ import {questions} from "./Question/questions.js"
 import {App} from "./Components/App.js"
 Devvit.configure({
   redditAPI: true,
+  redis:true,
 });
 
 // Add a menu item to the subreddit menu for instantiating the new experience post

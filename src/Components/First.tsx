@@ -4,6 +4,8 @@ import { Columns } from "@devvit/kit";
 interface FirstProps {
   page: string;
   updateParentValue: (newValue: string) => void;
+  userName:string|null;
+  context:Devvit.Context;
 }
 
 const questions = [
@@ -54,10 +56,10 @@ const questions = [
   },
 ];
 
-export function First({ page, updateParentValue }: FirstProps) {
+export function First({ page, updateParentValue,context,userName }: FirstProps) {
   const [counter, setCounter] = useState(0)
     const [questionIndex,setQuestionIndex]=useState(0)
-    const [score,setScore]=useState(0)
+    const [score,setScore]=useState(90)
     const [currentQuestion,setCurrentQuestion]=useState('')
     const [selection,setSelection]=useState("")
   const [tastes,setTastes]=useState({spicy: 0, tangy: 0, bitter: 0, sweet: 0 })
@@ -79,44 +81,59 @@ export function First({ page, updateParentValue }: FirstProps) {
       }
     }
 
+    async function addToLeaderboard(context: Devvit.Context, memberName: string, score: number) {
+      try {
+        await context.redis.zAdd(
+          'leaderboard',
+          { member: memberName, score: score }
+        );
+        console.log(`Added ${memberName} with score ${score} to leaderboard`);
+      } catch (error) {
+        console.error(`Error adding to leaderboard: ${error}`);
+      }
+    }
+
   const changeTaste=(data)=>{
       setTastes(data)
   }
 
     
     return (
-      <vstack alignment='center' height='100%' gap='medium' padding="small">
-        <text  weight='bold'>
+      <vstack alignment='center' height='100%' gap='medium' padding="small" backgroundColor="Yellow-200">
+        {/* <text  weight='bold'>
           Current Question Index-{questionIndex}
           ---------------- {questions.length}
-        </text>
+        </text> */}
 
-         <text size="xlarge" >
+         <text color="black" size="xlarge" >
            {questions[questionIndex].question}
         </text>
-        <vstack gap="small"  width="100%">
-           <Columns columnCount={2}    gapY="20px" order="column">
+        <vstack gap="small"  width="70%">
+           <Columns columnCount={2}   gapX="30px" gapY="20px" order="column">
            {
           questions[questionIndex].options.map((option)=>(
             <hstack 
-              gap="small"
-              border="thick"
-              alignment="center"
-               onPress={() => {
-                 setSelection(option.name)
-                 changeTaste(option)
-               }}
-           
-              >
-              <hstack   gap="small">
-                      <icon
-              name={
-                selection === option.name
-                  ? 'radio-button-fill'
-                  : 'radio-button-outline'
-              }
-            />
-            <text>
+            gap="small"
+            border="thick"
+            borderColor="#FB9EC6"
+              padding="small"
+             backgroundColor={
+              selection === option.name
+                ? '#f35499'
+                : '#FBB4A5'
+            }
+            
+           cornerRadius="medium"
+            alignment="center"
+             onPress={() => {
+               setSelection(option.name)
+               changeTaste(option)
+             }}
+         
+            >
+              <hstack  alignment="middle center" gap="small">
+  
+            <text color="black" size="xlarge">
             {option.name}
             </text>
               </hstack>
@@ -140,13 +157,16 @@ export function First({ page, updateParentValue }: FirstProps) {
         setTangy(tangy+tastes.tangy)
         setSweet(sweet+tastes.sweet)
         
-      }} appearance="primary" disabled={!selection && questionIndex!=questions.length}>
+      }} appearance="media"  disabled={!selection && questionIndex!=questions.length}>
         Next
         </button>
 
-        <text>
+<button onPress={()=>addToLeaderboard(context,typeof userName==="string"?userName:"Simon of the Lost world",score)}>Checking if addition works</button>
+
+       <text>
         Score-{score}
         </text>
+         {/* 
         <text>
           Current Option-{selection}
         </text>
@@ -162,7 +182,7 @@ export function First({ page, updateParentValue }: FirstProps) {
         <text>Current Tangy-{tangy}</text>
 
           
-        </hstack>
+        </hstack> */}
         
       </vstack>
     )
