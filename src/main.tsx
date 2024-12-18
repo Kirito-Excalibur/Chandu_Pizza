@@ -9,13 +9,13 @@ Devvit.configure({
 
 // Add a menu item to the subreddit menu for instantiating the new experience post
 Devvit.addMenuItem({
-  label: "Add my counter",
+  label: "Cook Chandu's Pizza",
   location: "subreddit",
   onPress: async (_event, context) => {
     const { reddit, ui } = context;
     const subreddit = await reddit.getCurrentSubreddit();
     await reddit.submitPost({
-      title: "My king post",
+      title: "Chandu's Pizza",
       subredditName: subreddit.name,
       // The preview appears while the post loads
       preview: (

@@ -54,7 +54,7 @@ export function App(ctx:Devvit.Context){
     }
     else if(page==Page.HomePage)
     {
-        return <HomePage page={Page.HomePage} updateParentValue={updateValue}  userName={data}/>
+        return <HomePage page={Page.HomePage} updateParentValue={updateValue}  userName={data} context={ctx}/>
     }
     else if(page==Page.Final)
     {
